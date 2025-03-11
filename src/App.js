@@ -9,6 +9,8 @@ import JobDetail from "./components/JobDetail"; // Optional detailed view
 import SignUp from "./components/Signup";
 import ApplicationDetail from "./components/ApplicantDetail";
 import CompanyJobDetail from "./components/CompanyJobDetail";
+import JobPostingForm from "./components/JobPostingForm";
+import EditJob from "./components/EditJob";
 
 function App() {
   return (
@@ -27,10 +29,13 @@ function App() {
 
           {/* Company Dashboard (requires login) */}
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create-job" element={<JobPostingForm />} />
 
           {/* Optional: Job Detail Page */}
           <Route path="/job/:id" element={<JobDetail />} />
           <Route path="/dashboard/job/:jobId" element={<CompanyJobDetail />} />
+
+          <Route path="/edit-job/:jobId" element={<EditJob />} />
           {/* Application detail view: shows details for a specific applicant */}
           <Route
             path="/dashboard/job/:jobId/applicants/:applicationId"

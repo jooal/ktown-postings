@@ -1,13 +1,14 @@
 // src/components/JobDetail.js
 import React, { useEffect, useState } from "react";
 import { firestore, auth } from "../firebase";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import ApplicationForm from "./ApplicationForm";
 
 const JobDetail = () => {
   const { id } = useParams(); // job id
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // State for the current authenticated user
   const [currentUser, setCurrentUser] = useState(null);
@@ -60,16 +61,35 @@ const JobDetail = () => {
     }
   }, [job, currentUser, id]);
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   if (loading) return <p>Loading...</p>;
   if (!job) return <p>Job not found.</p>;
 
   return (
     <div>
+      <button
+        type="button"
+        style={{ marginBlockEnd: "24px" }}
+        className="btn btn-primary"
+        onClick={handleBack}
+      >
+        Back to jobs
+      </button>
       <h2>{job.title}</h2>
+      <p>
+        Posted:
+        {job.createdAt.toDate().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+      </p>
       <p>
         <strong>Location:</strong> {job.location}
       </p>
-      <p>{job.description}</p>
       <hr />
       {currentUser && job.companyId === currentUser.uid ? (
         // If this is the company's own posting, show list of applicants.
@@ -82,10 +102,22 @@ const JobDetail = () => {
           ) : (
             <ul className="list-group">
               {applicants.map(app => (
-                <li key={app.id} className="list-group-item">
-                  <Link to={`/dashboard/job/${id}/applicants/${app.id}`}>
-                    {app.firstName} {app.lastName}
-                  </Link>
+                <li
+                  key={app.id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <Link to={`/dashboard/job/${id}/applicants/${app.id}`}>
+                      {app.firstName} {app.lastName}
+                    </Link>
+                  </div>
+                  <div>
+                    {app.paid ? (
+                      <span className="badge bg-success">Paid</span>
+                    ) : (
+                      <span className="badge bg-warning text-dark">Unpaid</span>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>

@@ -1,7 +1,6 @@
 // src/components/Dashboard.js
 import React, { useEffect, useState } from "react";
 import { auth, firestore } from "../firebase";
-import JobPostingForm from "./JobPostingForm";
 import JobList from "./JobList";
 import { useNavigate } from "react-router-dom";
 
@@ -18,6 +17,7 @@ const Dashboard = () => {
       navigate("/");
       return;
     }
+
     // Listen for job postings by this company (using user.uid)
     const unsubscribe = firestore
       .collection("jobs")
@@ -32,15 +32,25 @@ const Dashboard = () => {
     return () => unsubscribe();
   }, [user, navigate]);
 
+  const handleCreateJob = () => {
+    navigate("/create-job"); // navigate to a separate route
+  };
+
   return (
     <div>
       <h2>Your Postings</h2>
-
+      <div
+        style={{
+          display: "flex",
+          marginBlock: "12px",
+          justifyContent: "flex-end",
+        }}
+      >
+        <button className="btn btn-primary" onClick={handleCreateJob}>
+          Create Job
+        </button>
+      </div>
       <JobList jobs={jobs} />
-      <hr />
-
-      <h2>Company Dashboard</h2>
-      <JobPostingForm />
     </div>
   );
 };
